@@ -1,0 +1,21 @@
+# Indica que este es el archivo de configuración raíz del proyecto
+root = true
+
+# Aplica las siguientes reglas a todos los archivos del repositorio
+[*]
+
+# Establecer la codificación universal
+charset = utf-8
+
+# Usar LF como salto de línea en todos los sistemas
+end_of_line = lf
+
+# Usar 2 espacios para sangrado
+indent_style = space
+indent_size = 2
+
+# Añadir línea en blanco al final
+insert_final_newline = true
+
+# Eliminar espacios innecesarios al final de las líneas
+trim_trailing_whitespace = true

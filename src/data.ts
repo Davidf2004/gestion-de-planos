@@ -1,0 +1,351 @@
+import type { ConstructionInfo, Plano, User, Version } from './types'
+
+export const USERS: User[] = [
+  {
+    id: 'u-laura',
+    name: 'Arq. Laura Ruiz',
+    role: 'proyectista',
+    title: 'Proyectista autorizada',
+    initials: 'LR',
+  },
+  {
+    id: 'u-carlos',
+    name: 'Ing. Carlos Mendoza',
+    role: 'autorizador',
+    title: 'Autorizador interno',
+    initials: 'CM',
+  },
+  {
+    id: 'u-ricardo',
+    name: 'Sr. Ricardo Cimas',
+    role: 'cliente',
+    title: 'Cliente propietario',
+    initials: 'RC',
+  },
+  {
+    id: 'u-mateo',
+    name: 'Ing. Mateo Hernández',
+    role: 'residente',
+    title: 'Residente de obra',
+    initials: 'MH',
+  },
+]
+
+const fachadaN3: ConstructionInfo = {
+  niveles: ['Nivel 3'],
+  ejes: 'Ejes A–F / 3–8',
+  areas: [
+    { nombre: 'Vanos de fachada norte', m2: 86.4 },
+    { nombre: 'Antepechos', m2: 21.2 },
+  ],
+  materiales: [
+    'Perfil de aluminio térmico RPT color grafito',
+    'Vidrio DVH 6+12+6 low-e',
+    'Sellador estructural silicona negra',
+  ],
+  medidasClave: [
+    { etiqueta: 'Claro entre ejes', valor: '3 600 mm' },
+    { etiqueta: 'Alto de vano', valor: '2 400 mm' },
+    { etiqueta: 'Antepecho', valor: '900 mm' },
+    { etiqueta: 'Jamba', valor: '75 mm' },
+  ],
+  anotaciones: [
+    'Todos los vanos alineados al eje de fachada norte.',
+    'No alterar cotas de antepecho: afectan pretiles de losa.',
+  ],
+  esquema: [
+    { id: 'V3-A', label: 'V3-A', widthMm: 1800, heightMm: 2400, sillMm: 900, type: 'corredera' },
+    { id: 'V3-B', label: 'V3-B', widthMm: 1200, heightMm: 2400, sillMm: 900, type: 'fija' },
+    { id: 'V3-C', label: 'V3-C', widthMm: 1800, heightMm: 2400, sillMm: 900, type: 'corredera' },
+    { id: 'V3-D', label: 'V3-D', widthMm: 1200, heightMm: 2400, sillMm: 900, type: 'oscilobatiente' },
+  ],
+}
+
+const fachadaN3RevB: ConstructionInfo = {
+  ...fachadaN3,
+  medidasClave: [
+    { etiqueta: 'Claro entre ejes', valor: '3 600 mm' },
+    { etiqueta: 'Alto de vano', valor: '2 250 mm' },
+    { etiqueta: 'Antepecho', valor: '1 050 mm' },
+    { etiqueta: 'Jamba', valor: '75 mm' },
+  ],
+  anotaciones: [
+    'Rev. B: se sube antepecho 150 mm por cambio de pretil.',
+    'Requiere recorte de perfiles ya fabricados.',
+  ],
+  esquema: fachadaN3.esquema.map((b) => ({ ...b, heightMm: 2250, sillMm: 1050 })),
+}
+
+const fachadaN4: ConstructionInfo = {
+  niveles: ['Nivel 4'],
+  ejes: 'Ejes A–F / 3–8',
+  areas: [{ nombre: 'Vanos de fachada norte N4', m2: 92.0 }],
+  materiales: [
+    'Perfil de aluminio térmico RPT color grafito',
+    'Vidrio DVH 8+12+6',
+  ],
+  medidasClave: [
+    { etiqueta: 'Alto de vano', valor: '2 550 mm' },
+    { etiqueta: 'Antepecho', valor: '750 mm' },
+  ],
+  anotaciones: ['Cambio de altura libre por doble altura en lobby N4.'],
+  esquema: [
+    { id: 'V4-A', label: 'V4-A', widthMm: 2100, heightMm: 2550, sillMm: 750, type: 'proyectante' },
+    { id: 'V4-B', label: 'V4-B', widthMm: 2100, heightMm: 2550, sillMm: 750, type: 'fija' },
+    { id: 'V4-C', label: 'V4-C', widthMm: 2100, heightMm: 2550, sillMm: 750, type: 'corredera' },
+  ],
+}
+
+const canceleria: ConstructionInfo = {
+  niveles: ['PB', 'Nivel 1'],
+  ejes: 'Ejes interiores C–D',
+  areas: [{ nombre: 'Puertas y cancelería interior', m2: 34.5 }],
+  materiales: ['Aluminio natural anodizado', 'Vidrio templado 10 mm'],
+  medidasClave: [
+    { etiqueta: 'Hoja de puerta', valor: '900 × 2 100 mm' },
+    { etiqueta: 'Claro libre', valor: '850 mm' },
+  ],
+  anotaciones: ['Herraje de piso empotrado; no mover eje de puerta P-12.'],
+  esquema: [
+    { id: 'P-12', label: 'P-12', widthMm: 900, heightMm: 2100, sillMm: 0, type: 'oscilobatiente' },
+    { id: 'C-04', label: 'C-04', widthMm: 2400, heightMm: 2100, sillMm: 0, type: 'fija' },
+  ],
+}
+
+export const SEED_PLANOS: Plano[] = [
+  {
+    id: 'p-ven-n3',
+    clave: 'VEN-N3-FN-01',
+    nombre: 'Fachada norte — ventanas Torre A N3',
+    disciplina: 'Ventanas',
+    zona: 'Fachada lado norte Torre A',
+    nivel: 'Nivel 3',
+  },
+  {
+    id: 'p-ven-n4',
+    clave: 'VEN-N4-FN-02',
+    nombre: 'Fachada norte — ventanas Torre A N4',
+    disciplina: 'Fachada',
+    zona: 'Fachada lado norte Torre A',
+    nivel: 'Nivel 4',
+  },
+  {
+    id: 'p-int',
+    clave: 'VEN-INT-TA-03',
+    nombre: 'Cancelería interior Torre A',
+    disciplina: 'Cancelería',
+    zona: 'Interiores Torre A',
+    nivel: 'PB – N1',
+  },
+]
+
+export const SEED_VERSIONS: Version[] = [
+  {
+    id: 'v-n3-a',
+    planoId: 'p-ven-n3',
+    version: 'Rev A',
+    clave: 'VEN-N3-FN-01',
+    motivoCambio: 'Emisión inicial para fabricación de perfiles Nivel 3.',
+    fechaEmision: '2026-06-12',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'obsoleta',
+    pdfName: 'VEN-N3-FN-01_RevA.pdf',
+    dwgName: 'VEN-N3-FN-01_RevA.dwg',
+    afectaObra: false,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-06-13T10:00:00',
+        comentario: 'Visto bueno de emisión inicial.',
+      },
+    ],
+    createdAt: '2026-06-12T09:00:00',
+    construction: {
+      ...fachadaN3,
+      medidasClave: [
+        { etiqueta: 'Alto de vano', valor: '2 400 mm' },
+        { etiqueta: 'Antepecho', valor: '900 mm' },
+      ],
+    },
+  },
+  {
+    id: 'v-n3-b',
+    planoId: 'p-ven-n3',
+    version: 'Rev B',
+    clave: 'VEN-N3-FN-01',
+    motivoCambio: 'Ajuste de antepecho +150 mm por cambio de pretil de losa.',
+    fechaEmision: '2026-07-20',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'obsoleta',
+    pdfName: 'VEN-N3-FN-01_RevB.pdf',
+    dwgName: 'VEN-N3-FN-01_RevB.dwg',
+    afectaObra: true,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-07-21T11:20:00',
+        comentario: 'Coordinado con estructura.',
+      },
+      {
+        tipo: 'cliente',
+        decision: 'aprobado',
+        actorId: 'u-ricardo',
+        actorName: 'Sr. Ricardo Cimas',
+        fecha: '2026-07-22T16:00:00',
+        comentario: 'Autorizado. Afecta pretiles ya colados.',
+      },
+    ],
+    createdAt: '2026-07-20T08:30:00',
+    construction: fachadaN3RevB,
+  },
+  {
+    id: 'v-n3-c',
+    planoId: 'p-ven-n3',
+    version: 'Rev C',
+    clave: 'VEN-N3-FN-01',
+    motivoCambio: 'Regreso a antepecho original: el pretil se resolvió con zoclo metálico.',
+    fechaEmision: '2026-09-02',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'vigente',
+    pdfName: 'VEN-N3-FN-01_RevC.pdf',
+    dwgName: 'VEN-N3-FN-01_RevC.dwg',
+    afectaObra: true,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-09-03T09:15:00',
+        comentario: 'Visto bueno. Coincide con lo ejecutado en N3.',
+      },
+      {
+        tipo: 'cliente',
+        decision: 'aprobado',
+        actorId: 'u-ricardo',
+        actorName: 'Sr. Ricardo Cimas',
+        fecha: '2026-09-03T18:40:00',
+        comentario: 'Autorizo el cambio. Fabricar contra Rev C.',
+      },
+    ],
+    createdAt: '2026-09-02T14:00:00',
+    construction: fachadaN3,
+  },
+  {
+    id: 'v-n4-a',
+    planoId: 'p-ven-n4',
+    version: 'Rev A',
+    clave: 'VEN-N4-FN-02',
+    motivoCambio: 'Emisión inicial Nivel 4.',
+    fechaEmision: '2026-08-01',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'vigente',
+    pdfName: 'VEN-N4-FN-02_RevA.pdf',
+    dwgName: 'VEN-N4-FN-02_RevA.dwg',
+    afectaObra: false,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-08-02T12:00:00',
+        comentario: 'Visto bueno.',
+      },
+    ],
+    createdAt: '2026-08-01T10:00:00',
+    construction: {
+      ...fachadaN4,
+      medidasClave: [
+        { etiqueta: 'Alto de vano', valor: '2 400 mm' },
+        { etiqueta: 'Antepecho', valor: '900 mm' },
+      ],
+      esquema: fachadaN4.esquema.map((b) => ({ ...b, heightMm: 2400, sillMm: 900 })),
+    },
+  },
+  {
+    id: 'v-n4-b',
+    planoId: 'p-ven-n4',
+    version: 'Rev B',
+    clave: 'VEN-N4-FN-02',
+    motivoCambio: 'Incremento de claro vertical por doble altura del lobby. Afecta fabricación ya pedida.',
+    fechaEmision: '2026-10-06',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'pendiente_cliente',
+    pdfName: 'VEN-N4-FN-02_RevB.pdf',
+    dwgName: 'VEN-N4-FN-02_RevB.dwg',
+    afectaObra: true,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-10-07T09:00:00',
+        comentario: 'VB interno. Pendiente autorización del cliente porque afecta obra.',
+      },
+    ],
+    createdAt: '2026-10-06T17:20:00',
+    construction: fachadaN4,
+  },
+  {
+    id: 'v-int-a',
+    planoId: 'p-int',
+    version: 'Rev A',
+    clave: 'VEN-INT-TA-03',
+    motivoCambio: 'Emisión inicial de cancelería interior.',
+    fechaEmision: '2026-07-05',
+    autorId: 'u-laura',
+    autorName: 'Arq. Laura Ruiz',
+    status: 'vigente',
+    pdfName: 'VEN-INT-TA-03_RevA.pdf',
+    afectaObra: false,
+    solicitanteId: 'u-laura',
+    solicitanteName: 'Arq. Laura Ruiz',
+    approvals: [
+      {
+        tipo: 'interno',
+        decision: 'aprobado',
+        actorId: 'u-carlos',
+        actorName: 'Ing. Carlos Mendoza',
+        fecha: '2026-07-06T11:00:00',
+        comentario: 'Visto bueno.',
+      },
+    ],
+    createdAt: '2026-07-05T09:30:00',
+    construction: canceleria,
+  },
+]
+
+export const DEFAULT_CONSTRUCTION: ConstructionInfo = {
+  niveles: ['Por definir'],
+  ejes: 'Por definir',
+  areas: [],
+  materiales: [],
+  medidasClave: [],
+  anotaciones: [],
+  esquema: [
+    { id: 'VAN-01', label: 'VAN-01', widthMm: 1500, heightMm: 2100, sillMm: 900, type: 'fija' },
+  ],
+}
