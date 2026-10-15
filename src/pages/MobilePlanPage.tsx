@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Download } from 'lucide-react'
 import { PlanSheet } from '../components/PlanSheet'
+import { downloadConsultaPdf } from '../lib/downloadPlanPdf'
 import { useStore } from '../store'
 
 export function MobilePlanPage() {
@@ -8,6 +10,8 @@ export function MobilePlanPage() {
   const { state, vigenteOf } = useStore()
   const plano = state.planos.find((p) => p.id === id)
   const vigente = plano ? vigenteOf(plano.id) : undefined
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
   if (!plano || !vigente) {
     return (
@@ -18,14 +22,18 @@ export function MobilePlanPage() {
     )
   }
 
-  const payload = {
-    clave: vigente.clave,
-    version: vigente.version,
-    medidas: vigente.construction.medidasClave,
-    materiales: vigente.construction.materiales,
-    vanos: vigente.construction.esquema,
+  async function onDownload() {
+    if (!plano || !vigente) return
+    setError('')
+    setBusy(true)
+    try {
+      await downloadConsultaPdf(vigente, plano)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo descargar el PDF.')
+    } finally {
+      setBusy(false)
+    }
   }
-  const bytes = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }).size
 
   return (
     <div className="mobile-shell">
@@ -37,19 +45,22 @@ export function MobilePlanPage() {
           <strong>{plano.clave}</strong>
           <small>Vista de campo · RF-12</small>
         </div>
-        <a
+        <button
+          type="button"
           className="icon-btn"
-          href={`data:application/json,${encodeURIComponent(JSON.stringify(payload))}`}
-          download={`${vigente.clave}_${vigente.version}.json`}
-          aria-label="Descargar paquete ligero"
+          onClick={() => void onDownload()}
+          disabled={busy}
+          aria-label="Descargar PDF de consulta"
+          title="Descargar PDF de consulta"
         >
           <Download size={16} />
-        </a>
+        </button>
       </header>
       <p className="mobile-note">
-        Formato adaptado a teléfono: esquema de vanos, cotas, materiales y anotaciones. Paquete ligero ≈ {bytes} bytes.
-        El DWG de taller no viaja; el PDF de consulta y las cotas sí.
+        Formato adaptado a teléfono: esquema de vanos, cotas, materiales y anotaciones.
+        El botón de descarga genera un <strong>PDF de consulta</strong> para obra (sin el DWG de taller).
       </p>
+      {error && <p className="form-error">{error}</p>}
       <PlanSheet version={vigente} compact />
     </div>
   )
